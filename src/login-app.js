@@ -3,9 +3,10 @@ import "./shared-styles.js";
 import "@material/mwc-textfield";
 import "@material/mwc-button";
 import "@material/mwc-icon";
-import '@polymer/iron-ajax/iron-ajax.js';
-import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
+import "@polymer/iron-ajax/iron-ajax.js";
+import "@polymer/app-route/app-location.js";
+import "@polymer/app-route/app-route.js";
+import Swal from "sweetalert2";
 
 class LoginApp extends PolymerElement {
   static get template() {
@@ -26,7 +27,6 @@ class LoginApp extends PolymerElement {
         content-type="application/json"
         handle-as="json"
         on-response="handleUserResponse"
-        on-error="handleUserError"
         loading="{{cargando}}"
       >
       </iron-ajax>
@@ -63,41 +63,35 @@ class LoginApp extends PolymerElement {
         </p>
 
         <p>
-          <mwc-button
-            raised
-            label="Ingresar"
-            on-click="login"
-          ></mwc-button>
-          <mwc-button
-            label="Registrarse"
-            on-click="registrar"
-          ></mwc-button>
+          <mwc-button raised label="Ingresar" on-click="login"></mwc-button>
+          <mwc-button label="Registrarse" on-click="registrar"></mwc-button>
         </p>
       </div>
     `;
   }
   login() {
-    this.$.LoginAjax.url = 'http://localhost:3000/api/v1/usuarios/login';
-    this.$.LoginAjax.body = {email: this.$.email.value, password: this.$.password.value };
+    this.$.LoginAjax.url = "http://localhost:3000/apirest/usuarios/login";
+    this.$.LoginAjax.body = {
+      email: this.$.email.value,
+      password: this.$.password.value,
+    };
     this.$.LoginAjax.generateRequest();
   }
+
+  registrar() {
+    // redirect to Secret Quotes
+    this.set("route.path", "/registrar");
+  }
   handleUserResponse(event) {
-    // var response = JSON.parse(event.detail.response);
     var response = event.detail.response;
     if (response.email) {
-        this.error = '';
-        this.storedUser = {
-            loggedin: true
-        };
-        // redirect to Secret Quotes
-        this.set('route.path', '/accounts');
+      this.set("route.path", "/dashboard");
+    } else {
+      alert(response.mensaje);
     }
     // reset form data
     this.formData = {};
-}
-handleUserError(event) {
-    this.error = JSON.parse(event.detail.request.xhr.response).mensaje;
-}
+  }
 }
 
 window.customElements.define("login-app", LoginApp);

@@ -25,8 +25,14 @@
     "@polymer/iron-pages": "^3.0.0-pre.15",
     "@polymer/iron-selector": "^3.0.0-pre.15",
     "@polymer/paper-icon-button": "^3.0.0-pre.15",
+    "@polymer/paper-spinner": "^3.0.2",
     "@polymer/polymer": "^3.0.0",
-    "@webcomponents/webcomponentsjs": "^2.0.0"
+    "@vaadin/vaadin-grid": "github:vaadin/vaadin-grid",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "ag-grid-webcomponent": "^17.1.0",
+    "bootstrap": "^4.5.3",
+    "sweetalert2": "^10.12.6",
+    "wct-datatables-net": "^1.4.4"
   },
   "devDependencies": {
     "polymer-cli": "^1.9.11",

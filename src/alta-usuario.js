@@ -6,7 +6,6 @@ import "@material/mwc-icon";
 import "@polymer/iron-ajax/iron-ajax.js";
 import "@polymer/app-route/app-location.js";
 import "@polymer/app-route/app-route.js";
-import { register } from "@polymer/polymer/lib/mixins/element-mixin";
 
 class AltaUsuario extends PolymerElement {
   static get template() {
@@ -27,7 +26,6 @@ class AltaUsuario extends PolymerElement {
         content-type="application/json"
         handle-as="json"
         on-response="handleUserResponse"
-        on-error="handleUserError"
         loading="{{cargando}}"
       >
       </iron-ajax>
@@ -142,7 +140,7 @@ class AltaUsuario extends PolymerElement {
   }
   registrar() {
     this.$.RegistrarAjax.url =
-      "http://localhost:3000/api/v1/usuarios/registrar";
+      "http://localhost:3000/apirest/usuarios/registrar";
     this.$.RegistrarAjax.body = {
       email: this.$.email.value,
       password: this.$.password.value,
@@ -154,21 +152,14 @@ class AltaUsuario extends PolymerElement {
     this.$.RegistrarAjax.generateRequest();
   }
   handleUserResponse(event) {
-    // var response = JSON.parse(event.detail.response);
     var response = event.detail.response;
-    if (response.email) {
-      this.error = "";
-      this.storedUser = {
-        loggedin: true,
-      };
-      // redirect to Secret Quotes
-      this.set("route.path", "/accounts");
+      if (Object.entries(response).length == 0) {
+      this.set("route.path", "/login");
+    } else {
+      alert("Email "+  this.$.email.value + " ya se encuentra registrado");
     }
     // reset form data
     this.formData = {};
-  }
-  handleUserError(event) {
-    this.error = JSON.parse(event.detail.request.xhr.response).mensaje;
   }
 }
 

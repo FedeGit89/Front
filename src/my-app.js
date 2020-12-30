@@ -97,8 +97,9 @@ class MyApp extends PolymerElement {
             class="drawer-list"
             role="navigation"
           >
-            <a name="registrar" href="[[rootPath]]registrar">Registrar</a>
-            <a name="view2" href="[[rootPath]]view2">View Two</a>
+            <a name="cuenta" href="[[rootPath]]cuenta">Cuenta</a>
+            <a name="usuarios" href="[[rootPath]]usuarios">Usuarios</a>
+            <a name="cotizacion" href="[[rootPath]]cotizacion">Cotizacion</a>
             <a name="view3" href="[[rootPath]]view3">View Three</a>
           </iron-selector>
         </app-drawer>
@@ -111,13 +112,16 @@ class MyApp extends PolymerElement {
                 icon="my-icons:menu"
                 drawer-toggle=""
               ></paper-icon-button>
-              <div main-title="">My App</div>
+              <div main-title="">Proyecto</div>
             </app-toolbar>
           </app-header>
 
           <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
+            <view-dashboard name="dashboard"></view-dashboard>
             <alta-usuario name="registrar"></alta-usuario>
-            <my-view2 name="view2"></my-view2>
+            <abm-cuenta name="cuenta"></abm-cuenta>
+            <cotiz-usd name="cotizacion"></cotiz-usd>
+            <abm-usuario name="usuarios"></abm-usuario>
             <my-view3 name="view3"></my-view3>
             <my-view404 name="view404"></my-view404>
             <login-app name="login"></login-app>
@@ -150,7 +154,16 @@ class MyApp extends PolymerElement {
     // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
     if (!page) {
       this.page = "registrar";
-    } else if (["registrar", "view2", "view3"].indexOf(page) !== -1) {
+    } else if (
+      [
+        "registrar",
+        "dashboard",
+        "usuarios",
+        "cuenta",
+        "cotizacion",
+        "view3",
+      ].indexOf(page) !== -1
+    ) {
       this.page = page;
     } else {
       this.page = "login";
@@ -168,11 +181,20 @@ class MyApp extends PolymerElement {
     // Note: `polymer build` doesn't like string concatenation in the import
     // statement, so break it up.
     switch (page) {
+      case "dashboard":
+        import("./view-dashboard.js");
+        break;
       case "registrar":
         import("./alta-usuario.js");
         break;
-      case "view2":
-        import("./my-view2.js");
+      case "usuarios":
+        import("./abm-usuario.js");
+        break;
+      case "cuenta":
+        import("./abm-cuenta.js");
+        break;
+      case "cotizacion":
+        import("./cotiz-usd.js");
         break;
       case "view3":
         import("./my-view3.js");
