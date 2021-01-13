@@ -98,9 +98,7 @@ class MyApp extends PolymerElement {
             role="navigation"
           >
             <a name="cuenta" href="[[rootPath]]cuenta">Cuenta</a>
-            <a name="usuarios" href="[[rootPath]]usuarios">Usuarios</a>
             <a name="cotizacion" href="[[rootPath]]cotizacion">Cotizacion</a>
-            <a name="view3" href="[[rootPath]]view3">View Three</a>
           </iron-selector>
         </app-drawer>
 
@@ -121,9 +119,6 @@ class MyApp extends PolymerElement {
             <alta-usuario name="registrar"></alta-usuario>
             <abm-cuenta name="cuenta"></abm-cuenta>
             <cotiz-usd name="cotizacion"></cotiz-usd>
-            <abm-usuario name="usuarios"></abm-usuario>
-            <my-view3 name="view3"></my-view3>
-            <my-view404 name="view404"></my-view404>
             <login-app name="login"></login-app>
           </iron-pages>
         </app-header-layout>
@@ -155,14 +150,7 @@ class MyApp extends PolymerElement {
     if (!page) {
       this.page = "registrar";
     } else if (
-      [
-        "registrar",
-        "dashboard",
-        "usuarios",
-        "cuenta",
-        "cotizacion",
-        "view3",
-      ].indexOf(page) !== -1
+      ["registrar", "dashboard", "cuenta", "cotizacion"].indexOf(page) !== -1
     ) {
       this.page = page;
     } else {
@@ -187,20 +175,11 @@ class MyApp extends PolymerElement {
       case "registrar":
         import("./alta-usuario.js");
         break;
-      case "usuarios":
-        import("./abm-usuario.js");
-        break;
       case "cuenta":
         import("./abm-cuenta.js");
         break;
       case "cotizacion":
         import("./cotiz-usd.js");
-        break;
-      case "view3":
-        import("./my-view3.js");
-        break;
-      case "view404":
-        import("./my-view404.js");
         break;
       case "login":
         import("./login-app.js");

@@ -30,6 +30,15 @@ class AltaUsuario extends PolymerElement {
       >
       </iron-ajax>
 
+      <iron-ajax
+        id="AltaCuentaAjax"
+        method="POST"
+        content-type="application/json"
+        handle-as="json"
+        on-response="handleUserCuentaResponse"
+      >
+      </iron-ajax>
+
       <div class="card">
         <h2>Alta de usuario</h2>
 
@@ -134,6 +143,7 @@ class AltaUsuario extends PolymerElement {
 
         <p>
           <mwc-button raised label="Alta" on-click="registrar"></mwc-button>
+          <mwc-button label="Volver" on-click="volver"></mwc-button>
         </p>
       </div>
     `;
@@ -151,12 +161,22 @@ class AltaUsuario extends PolymerElement {
     };
     this.$.RegistrarAjax.generateRequest();
   }
+
+  volver() {
+    this.set("route.path", "/login");
+  }
+
   handleUserResponse(event) {
     var response = event.detail.response;
-      if (Object.entries(response).length == 0) {
+    if (Object.entries(response).length == 0) {
+      this.$.AltaCuentaAjax.url = "http://localhost:3000/apirest/cuentas";
+      this.$.AltaCuentaAjax.body = {
+        email: this.$.email.value,
+      };
+      this.$.AltaCuentaAjax.generateRequest();
       this.set("route.path", "/login");
     } else {
-      alert("Email "+  this.$.email.value + " ya se encuentra registrado");
+      alert("Email " + this.$.email.value + " ya se encuentra registrado");
     }
     // reset form data
     this.formData = {};

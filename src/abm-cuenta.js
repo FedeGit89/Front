@@ -5,6 +5,7 @@ import "@material/mwc-button";
 import "@material/mwc-icon";
 import "@polymer/iron-ajax/iron-ajax.js";
 import "@polymer/app-route/app-location.js";
+import "@polymer/app-route/app-route.js";
 
 class AbmCuenta extends PolymerElement {
   static get template() {
@@ -20,9 +21,9 @@ class AbmCuenta extends PolymerElement {
       <div class="card">
         <h2>Saldo de la Cuenta</h2>
         <p>
+          <app-location route="{{route}}"></app-location>
           <iron-ajax
             id="ActualizarCuenta"
-            url="[[urlCuenta]]"
             method="PUT"
             handle-as="json"
             on-response="handleUserResponse"
@@ -31,7 +32,6 @@ class AbmCuenta extends PolymerElement {
 
           <iron-ajax
             id="GrabarMovimiento"
-            url="[[urlMovimiento]"
             method="POST"
             content-type="application/json"
             handle-as="json"
@@ -40,23 +40,38 @@ class AbmCuenta extends PolymerElement {
           </iron-ajax>
 
           <iron-ajax
-            auto
-            url="http://localhost:3000/apirest/movimientos/"
+            id="ValidarMail"
+            method="GET"
+            content-type="application/json"
+            handle-as="json"
+            on-response="handleUserResponseValidarMail"
+          ></iron-ajax>
+
+          <iron-ajax
+            id="AjaxVerMovimientos"
             method="GET"
             handle-as="json"
             last-response="{{movimientos}}"
           ></iron-ajax>
 
           <iron-ajax
-            auto
-            url="http://localhost:3000/apirest/cuentas/a@gmail.com"
+            id="AjaxObtenerSaldo"
             method="GET"
             handle-as="json"
             last-response="{{cuentas}}"
+            on-response="handleObtenerSaldo"
           ></iron-ajax>
         </p>
 
         <div>
+          <p>
+            <mwc-button
+              raised
+              label="Obtener Saldo"
+              on-click="ObtenerSaldo"
+            ></mwc-button>
+          </p>
+
           <template is="dom-repeat" items="[[cuentas]]">
             <h2>$ [[item.saldo]]</h2>
           </template>
@@ -87,10 +102,20 @@ class AbmCuenta extends PolymerElement {
           >
           </mwc-textfield>
 
+          <mwc-button label="Validar" on-click="Validar"></mwc-button>
+
           <mwc-button
             raised
             label="Transferir"
             on-click="Transferir"
+          ></mwc-button>
+        </p>
+
+        <p>
+          <mwc-button
+            raised
+            label="Ver Movimientos"
+            on-click="VerMovimientos"
           ></mwc-button>
         </p>
 
@@ -136,43 +161,98 @@ class AbmCuenta extends PolymerElement {
       </div>
     `;
   }
+
+  // ready: function() {
+  //   setTimeout(function () {
+  //     alert("Perro");
+  //   }, 3000);
+  //   console.log("After 3 seconds");
+
+  //   })
+
+  // }
+
+  // inicio: function() {
+  //   let email = localStorage.getItem("usuarioLogin");
+  //   this.$.ObtenerSaldo.url = "http://localhost:3000/apirest/cuentas/" + email;
+  //   this.$.ObtenerSaldo.generateRequest();
+  // }
+
+  ObtenerSaldo() {
+    let email = localStorage.getItem("usuarioLogin");
+    this.$.AjaxObtenerSaldo.url =
+      "http://localhost:3000/apirest/cuentas/" + email;
+    this.$.AjaxObtenerSaldo.generateRequest();
+  }
+
+  VerMovimientos() {
+    let email = localStorage.getItem("usuarioLogin");
+    this.$.AjaxVerMovimientos.url =
+      "http://localhost:3000/apirest/movimientos";
+    this.$.AjaxVerMovimientos.generateRequest();
+  }
+
+  Validar() {
+    let email = this.$.email.value;
+    this.$.ValidarMail.url = "http://localhost:3000/apirest/usuarios/" + email;
+    this.$.ValidarMail.generateRequest();
+  }
+
   Transferir() {
-    let email = "a@gmail.com";
+    let email = localStorage.getItem("usuarioLogin");
     let opcion = "D";
     let importe = this.$.Importe.value;
-    this.$.ActualizarCuenta.url = "http://localhost:3000/apirest/cuentas/"+email+"&"+opcion+"&"+importe;
+    this.$.ActualizarCuenta.url =
+      "http://localhost:3000/apirest/cuentas/" +
+      email +
+      "&" +
+      opcion +
+      "&" +
+      importe;
     this.$.ActualizarCuenta.generateRequest();
-
+    console.log("aca3");
     email = this.$.email.value;
     opcion = "C";
 
-    this.$.ActualizarCuenta.url = "http://localhost:3000/apirest/cuentas/"+email+"&"+opcion+"&"+importe;
+    this.$.ActualizarCuenta.url =
+      "http://localhost:3000/apirest/cuentas/" +
+      email +
+      "&" +
+      opcion +
+      "&" +
+      importe;
     this.$.ActualizarCuenta.generateRequest();
-
+    console.log("aca4");
     this.$.GrabarMovimiento.url = "http://localhost:3000/apirest/movimientos/";
     this.$.GrabarMovimiento.body = {
-      mailDebito: "a@gmail.com",
+      mailDebito: localStorage.getItem("usuarioLogin"),
       mailCredito: this.$.email.value,
       importe: this.$.Importe.value,
     };
     this.$.GrabarMovimiento.generateRequest();
-    this.set("route.path", "/dashboard");
+    //  location.reload();
     this.formData = {};
   }
+
   handleUserResponse(event) {
-    // var response = JSON.parse(event.detail.response);
+    console.log("entro");
+  }
+
+  handleUserResponseValidarMail(event) {
     var response = event.detail.response;
-    // if (response.email) {
-    // this.error = "";
-    // this.storedUser = {
-    //   loggedin: true,
-    // };
-    // redirect to Secret Quotes
-    //this.set("route.path", "/accounts");
-    //}
-    // reset form data
-    
-    //this.formData = {};
+    if (!response.email) {
+      alert(response.mensaje);
+    }
+  }
+
+  handleUserObtenerSaldo(event) {
+    console.log("Ingreso");
+  }
+
+  handleObtenerSaldo() {
+    let email = localStorage.getItem("usuarioLogin");
+    this.$.ObtenerSaldo.url = "http://localhost:3000/apirest/cuentas/" + email;
+    this.$.ObtenerSaldo.generateRequest();
   }
 }
 

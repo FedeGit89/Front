@@ -6,7 +6,6 @@ import "@material/mwc-icon";
 import "@polymer/iron-ajax/iron-ajax.js";
 import "@polymer/app-route/app-location.js";
 import "@polymer/app-route/app-route.js";
-import Swal from "sweetalert2";
 
 class LoginApp extends PolymerElement {
   static get template() {
@@ -22,7 +21,6 @@ class LoginApp extends PolymerElement {
       <app-location route="{{route}}"></app-location>
       <iron-ajax
         id="LoginAjax"
-        url="[[urlLogin]]"
         method="POST"
         content-type="application/json"
         handle-as="json"
@@ -85,6 +83,7 @@ class LoginApp extends PolymerElement {
   handleUserResponse(event) {
     var response = event.detail.response;
     if (response.email) {
+      localStorage.setItem("usuarioLogin", response.email);
       this.set("route.path", "/dashboard");
     } else {
       alert(response.mensaje);
