@@ -6,8 +6,9 @@ import "@material/mwc-icon";
 import "@polymer/iron-ajax/iron-ajax.js";
 import "@polymer/app-route/app-location.js";
 import "@polymer/app-route/app-route.js";
+import { AppLayoutBehavior } from "@polymer/app-layout/app-layout-behavior/app-layout-behavior";
 
-class AltaUsuario extends PolymerElement {
+class ModifUsuario extends PolymerElement {
   static get template() {
     return html`
       <style include="shared-styles">
@@ -18,29 +19,39 @@ class AltaUsuario extends PolymerElement {
         }
       </style>
 
-      <app-location route="{{route}}"></app-location>
       <iron-ajax
-        id="RegistrarAjax"
+        auto
+        url="http://localhost:3000/apirest/cuentas"
+        id="Mascara"
+        method="GET"
+        handle-as="json"
+        on-response="handleMascaraResponse"
+      >
+      </iron-ajax>
+
+      <iron-ajax
+        id="ModificarAjax"
         url="[[urlLogin]]"
-        method="POST"
+        method="PUT"
         content-type="application/json"
         handle-as="json"
-        on-response="handleUserResponse"
+        on-response="handleUserResponseModificar"
         loading="{{cargando}}"
       >
       </iron-ajax>
 
       <iron-ajax
-        id="AltaCuentaAjax"
-        method="POST"
+        auto
+        id="ObtenerDatos"
+        method="GET"
         content-type="application/json"
         handle-as="json"
-        on-response="handleUserCuentaResponse"
-      >
-      </iron-ajax>
+        on-response="handleUserResponse"
+        last-response="{{usuario}}"
+      ></iron-ajax>
 
       <div class="card">
-        <h2>Alta de usuario</h2>
+        <h2>Datos personales</h2>
 
         <p>
           <mwc-textfield
@@ -50,8 +61,8 @@ class AltaUsuario extends PolymerElement {
             required
             validationMessage="Nombre obligatorio"
             label="Nombre"
+            value="[[usuario.nombre]]"
             outlined
-            value=""
           >
           </mwc-textfield>
         </p>
@@ -64,8 +75,8 @@ class AltaUsuario extends PolymerElement {
             required
             validationMessage="Apellido obligatorio"
             label="Apellido"
+            value="[[usuario.apellido]]"
             outlined
-            value=""
           >
           </mwc-textfield>
         </p>
@@ -78,8 +89,8 @@ class AltaUsuario extends PolymerElement {
             required
             validationMessage="DNI obligatorio"
             label="DNI"
+            value="[[usuario.dni]]"
             outlined
-            value=""
           >
           </mwc-textfield>
         </p>
@@ -93,9 +104,9 @@ class AltaUsuario extends PolymerElement {
             validationMessage="Fecha de nacimineto obligatoria"
             label="Fecha de nacimiento"
             type="date"
+            value="[[usuario.fechaNacimiento]]"
             iconTrailing="date_range"
             outlined
-            value=""
           >
           </mwc-textfield>
         </p>
@@ -109,9 +120,10 @@ class AltaUsuario extends PolymerElement {
             validationMessage="El correo es un campo obligatorio"
             label="mail"
             type="email"
+            readonly
+            value="[[usuario.email]]"
             iconTrailing="alternate_email"
             outlined
-            value=""
           >
           </mwc-textfield>
         </p>
@@ -124,33 +136,40 @@ class AltaUsuario extends PolymerElement {
             required
             validationMessage="Ingresar contraseña"
             label="Password"
+            value=""
             type="password"
             iconTrailing="vpn_key"
             outlined
-            value=""
           >
           </mwc-textfield>
         </p>
 
         <p>
-          <mwc-button raised label="Alta" on-click="registrar"></mwc-button>
-          <mwc-button label="Volver" on-click="volver"></mwc-button>
+          <mwc-button
+            raised
+            label="Modificar"
+            on-click="modificar"
+          ></mwc-button>
         </p>
       </div>
     `;
   }
-  registrar() {
-    this.$.RegistrarAjax.url =
-      "http://localhost:3000/apirest/usuarios/registrar";
-    this.$.RegistrarAjax.body = {
-      email: this.$.email.value,
-      password: this.$.password.value,
-      nombre: this.$.nombre.value,
-      apellido: this.$.apellido.value,
-      dni: this.$.dni.value,
-      fechaNacimiento: this.$.fechaNacimiento.value,
-    };
-    this.$.RegistrarAjax.generateRequest();
+  modificar() {
+    if (this.$.password.value > "") {
+      this.$.ModificarAjax.url =
+        "http://localhost:3000/apirest/usuarios/" + this.$.email.value;
+      this.$.ModificarAjax.body = {
+        email: this.$.email.value,
+        password: this.$.password.value,
+        nombre: this.$.nombre.value,
+        apellido: this.$.apellido.value,
+        dni: this.$.dni.value,
+        fechaNacimiento: this.$.fechaNacimiento.value,
+      };
+      this.$.ModificarAjax.generateRequest();
+    } else {
+      alert("Debe cargar la contraseña");
+    }
   }
 
   volver() {
@@ -158,27 +177,21 @@ class AltaUsuario extends PolymerElement {
   }
 
   handleUserResponse(event) {
-    var response = event.detail.response;
-    if (Object.entries(response).length == 0) {
-      this.$.AltaCuentaAjax.url = "http://localhost:3000/apirest/cuentas";
-      this.$.AltaCuentaAjax.body = {
-        email: this.$.email.value,
-      };
-      this.$.AltaCuentaAjax.generateRequest();
-      alert("El alta se ha realizado correctamente");
-      this.$.email.value = "";
-      this.$.password.value = "";
-      this.$.nombre.value = "";
-      this.$.apellido.value ="";
-      this.$.dni.value = "";
-      this.$.fechaNacimiento.value ="";
-      this.set("route.path", "/login");
-    } else {
-      alert("Email " + this.$.email.value + " ya se encuentra registrado");
-    }
     // reset form data
     this.formData = {};
   }
+
+  handleUserResponseModificar() {
+    this.$.password.value = "";
+    alert("Se han modificado los datos");
+  }
+
+  handleMascaraResponse() {
+    this.$.ObtenerDatos.url =
+      "http://localhost:3000/apirest/usuarios/" +
+      localStorage.getItem("usuarioLogin");
+    this.$.ObtenerDatos.generateRequest();
+  }
 }
 
-window.customElements.define("alta-usuario", AltaUsuario);
+window.customElements.define("modif-usuario", ModifUsuario);

@@ -97,8 +97,12 @@ class MyApp extends PolymerElement {
             class="drawer-list"
             role="navigation"
           >
-            <a name="cuenta" href="[[rootPath]]cuenta">Cuenta</a>
-            <a name="cotizacion" href="[[rootPath]]cotizacion">Cotizacion</a>
+            <span id="lnkMenu">
+              <a name="datos" href="[[rootPath]]datos">Mis Datos</a>
+              <a name="cuenta" href="[[rootPath]]cuenta">Cuenta</a>
+              <a name="cotizacion" href="[[rootPath]]cotizacion">Cotizacion</a>
+              <a name="salir" href="[[rootPath]]login">Salir</a>
+            </span>
           </iron-selector>
         </app-drawer>
 
@@ -117,6 +121,7 @@ class MyApp extends PolymerElement {
           <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
             <view-dashboard name="dashboard"></view-dashboard>
             <alta-usuario name="registrar"></alta-usuario>
+            <modif-usuario name="datos"></modif-usuario>
             <abm-cuenta name="cuenta"></abm-cuenta>
             <cotiz-usd name="cotizacion"></cotiz-usd>
             <login-app name="login"></login-app>
@@ -130,7 +135,7 @@ class MyApp extends PolymerElement {
     return {
       page: {
         type: String,
-        reflectToAttribute: true,
+        // reflectToAttribute: true,
         observer: "_pageChanged",
       },
       routeData: Object,
@@ -147,15 +152,22 @@ class MyApp extends PolymerElement {
     //
     // If no page was found in the route data, page will be an empty string.
     // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
+    console.log(this.$.lnkMenu.hidden);
     if (!page) {
-      this.page = "registrar";
+      this.page = "login";
+      this.$.lnkMenu.hidden = true;
     } else if (
-      ["registrar", "dashboard", "cuenta", "cotizacion"].indexOf(page) !== -1
+      ["registrar", "dashboard", "cuenta", "datos", "cotizacion"].indexOf(
+        page
+      ) !== -1
     ) {
+      this.$.lnkMenu.hidden = false;
       this.page = page;
     } else {
+      this.$.lnkMenu.hidden = true;
       this.page = "login";
     }
+    console.log(this.$.lnkMenu.hidden);
 
     // Close a non-persistent drawer when the page & route are changed.
     if (!this.$.drawer.persistent) {
@@ -176,12 +188,18 @@ class MyApp extends PolymerElement {
         import("./alta-usuario.js");
         break;
       case "cuenta":
-        import("./abm-cuenta.js");
+        import("./alta-movimiento.js");
+        break;
+      case "datos":
+        import("./modif-usuario.js");
         break;
       case "cotizacion":
         import("./cotiz-usd.js");
         break;
       case "login":
+        import("./login-app.js");
+        break;
+      case "salir":
         import("./login-app.js");
         break;
     }

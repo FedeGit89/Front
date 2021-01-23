@@ -1,5 +1,5 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "Proyecto",
   "version": "4.0.0",
   "description": "A starting point for Polymer apps",
   "author": "The Polymer Authors",
@@ -16,27 +16,27 @@
     "@material/mwc-button": "^0.19.1",
     "@material/mwc-icon": "^0.19.1",
     "@material/mwc-textfield": "^0.19.1",
-    "@polymer/app-layout": "^3.0.0-pre.15",
-    "@polymer/app-route": "^3.0.0-pre.15",
+    "@polymer/app-layout": "^3.1.0",
+    "@polymer/app-route": "^3.0.2",
     "@polymer/iron-ajax": "^3.0.1",
-    "@polymer/iron-flex-layout": "^3.0.0-pre.15",
-    "@polymer/iron-iconset-svg": "^3.0.0-pre.15",
-    "@polymer/iron-media-query": "^3.0.0-pre.15",
-    "@polymer/iron-pages": "^3.0.0-pre.15",
-    "@polymer/iron-selector": "^3.0.0-pre.15",
-    "@polymer/paper-icon-button": "^3.0.0-pre.15",
+    "@polymer/iron-flex-layout": "^3.0.1",
+    "@polymer/iron-iconset-svg": "^3.0.1",
+    "@polymer/iron-media-query": "^3.0.1",
+    "@polymer/iron-pages": "^3.0.1",
+    "@polymer/iron-selector": "^3.0.1",
+    "@polymer/paper-icon-button": "^3.0.2",
     "@polymer/paper-spinner": "^3.0.2",
-    "@polymer/polymer": "^3.0.0",
+    "@polymer/polymer": "^3.4.1",
     "@vaadin/vaadin-grid": "github:vaadin/vaadin-grid",
-    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "@webcomponents/webcomponentsjs": "^2.5.0",
     "ag-grid-webcomponent": "^17.1.0",
     "bootstrap": "^4.5.3",
-    "sweetalert2": "^10.12.6",
+    "sweetalert2": "^10.13.0",
     "wct-datatables-net": "^1.4.4"
   },
   "devDependencies": {
     "polymer-cli": "^1.9.11",
-    "wct-browser-legacy": "^1.0.0"
+    "wct-browser-legacy": "^1.0.2"
   },
   "engines": {
     "node": ">=8.0"

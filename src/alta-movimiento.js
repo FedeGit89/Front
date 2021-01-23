@@ -19,9 +19,20 @@ class AbmCuenta extends PolymerElement {
       </style>
 
       <div class="card">
+        <app-location route="{{route}}"></app-location>
         <h2>Saldo de la Cuenta</h2>
         <p>
-          <app-location route="{{route}}"></app-location>
+        
+          <iron-ajax
+            auto
+            url="http://localhost:3000/apirest/cuentas"
+            id="Mascara"
+            method="GET"
+            handle-as="json"
+            on-response="handleMascaraResponse"
+          >
+          </iron-ajax>
+
           <iron-ajax
             id="ActualizarCuenta"
             method="PUT"
@@ -58,23 +69,22 @@ class AbmCuenta extends PolymerElement {
             id="AjaxObtenerSaldo"
             method="GET"
             handle-as="json"
-            last-response="{{cuentas}}"
-            on-response="handleObtenerSaldo"
+            last-response="{{cuenta}}"
           ></iron-ajax>
+
+          <iron-ajax
+          id="AjaxValidarSaldo"
+          method="GET"
+          handle-as="json"
+          on-response="handleUserResponseValidarSaldo""
+          last-response="{{cuenta}}"
+        ></iron-ajax>
         </p>
 
         <div>
-          <p>
-            <mwc-button
-              raised
-              label="Obtener Saldo"
-              on-click="ObtenerSaldo"
-            ></mwc-button>
-          </p>
-
-          <template is="dom-repeat" items="[[cuentas]]">
-            <h2>$ [[item.saldo]]</h2>
-          </template>
+          <h2>
+            <b> $ <label>[[cuenta.saldo]]</label></b>
+          </h2>
         </div>
 
         <p>
@@ -108,14 +118,6 @@ class AbmCuenta extends PolymerElement {
             raised
             label="Transferir"
             on-click="Transferir"
-          ></mwc-button>
-        </p>
-
-        <p>
-          <mwc-button
-            raised
-            label="Ver Movimientos"
-            on-click="VerMovimientos"
           ></mwc-button>
         </p>
 
@@ -162,97 +164,93 @@ class AbmCuenta extends PolymerElement {
     `;
   }
 
-  // ready: function() {
-  //   setTimeout(function () {
-  //     alert("Perro");
-  //   }, 3000);
-  //   console.log("After 3 seconds");
-
-  //   })
-
-  // }
-
-  // inicio: function() {
-  //   let email = localStorage.getItem("usuarioLogin");
-  //   this.$.ObtenerSaldo.url = "http://localhost:3000/apirest/cuentas/" + email;
-  //   this.$.ObtenerSaldo.generateRequest();
-  // }
-
-  ObtenerSaldo() {
-    let email = localStorage.getItem("usuarioLogin");
-    this.$.AjaxObtenerSaldo.url =
-      "http://localhost:3000/apirest/cuentas/" + email;
-    this.$.AjaxObtenerSaldo.generateRequest();
-  }
-
-  VerMovimientos() {
-    let email = localStorage.getItem("usuarioLogin");
-    this.$.AjaxVerMovimientos.url =
-      "http://localhost:3000/apirest/movimientos";
-    this.$.AjaxVerMovimientos.generateRequest();
-  }
-
   Validar() {
-    let email = this.$.email.value;
-    this.$.ValidarMail.url = "http://localhost:3000/apirest/usuarios/" + email;
+    this.$.AjaxValidarSaldo.url =
+      "http://localhost:3000/apirest/cuentas/" +
+      localStorage.getItem("usuarioLogin");
+    this.$.AjaxValidarSaldo.generateRequest();
+
+    this.$.ValidarMail.url =
+      "http://localhost:3000/apirest/usuarios/" + this.$.email.value;
     this.$.ValidarMail.generateRequest();
-  }
-
-  Transferir() {
-    let email = localStorage.getItem("usuarioLogin");
-    let opcion = "D";
-    let importe = this.$.Importe.value;
-    this.$.ActualizarCuenta.url =
-      "http://localhost:3000/apirest/cuentas/" +
-      email +
-      "&" +
-      opcion +
-      "&" +
-      importe;
-    this.$.ActualizarCuenta.generateRequest();
-    console.log("aca3");
-    email = this.$.email.value;
-    opcion = "C";
-
-    this.$.ActualizarCuenta.url =
-      "http://localhost:3000/apirest/cuentas/" +
-      email +
-      "&" +
-      opcion +
-      "&" +
-      importe;
-    this.$.ActualizarCuenta.generateRequest();
-    console.log("aca4");
-    this.$.GrabarMovimiento.url = "http://localhost:3000/apirest/movimientos/";
-    this.$.GrabarMovimiento.body = {
-      mailDebito: localStorage.getItem("usuarioLogin"),
-      mailCredito: this.$.email.value,
-      importe: this.$.Importe.value,
-    };
-    this.$.GrabarMovimiento.generateRequest();
-    //  location.reload();
-    this.formData = {};
-  }
-
-  handleUserResponse(event) {
-    console.log("entro");
   }
 
   handleUserResponseValidarMail(event) {
     var response = event.detail.response;
+    console.log(response.email);
     if (!response.email) {
       alert(response.mensaje);
+    } else {
+      localStorage.setItem("validarMail", "ok");
     }
   }
 
-  handleUserObtenerSaldo(event) {
-    console.log("Ingreso");
+  Transferir() {
+    let validarMail = localStorage.getItem("validarMail");
+    let validarSaldo = localStorage.getItem("validarSaldo");
+    if (validarMail == "ok" && validarSaldo == "ok") {
+      let email = localStorage.getItem("usuarioLogin");
+      let opcion = "D";
+      let importe = this.$.Importe.value;
+      this.$.ActualizarCuenta.url =
+        "http://localhost:3000/apirest/cuentas/" +
+        email +
+        "&" +
+        opcion +
+        "&" +
+        importe;
+      this.$.ActualizarCuenta.generateRequest();
+      console.log("aca3");
+      email = this.$.email.value;
+      opcion = "C";
+
+      this.$.ActualizarCuenta.url =
+        "http://localhost:3000/apirest/cuentas/" +
+        email +
+        "&" +
+        opcion +
+        "&" +
+        importe;
+      this.$.ActualizarCuenta.generateRequest();
+      console.log("aca4");
+      this.$.GrabarMovimiento.url =
+        "http://localhost:3000/apirest/movimientos/";
+      this.$.GrabarMovimiento.body = {
+        mailDebito: localStorage.getItem("usuarioLogin"),
+        mailCredito: this.$.email.value,
+        importe: this.$.Importe.value,
+      };
+      this.$.GrabarMovimiento.generateRequest();
+      localStorage.setItem("validarSaldo", "");
+      localStorage.setItem("validarMail", "");
+      location.reload();
+      this.formData = {};
+    } else {
+      alert("Debe validar el movimiento antes de transferir");
+    }
   }
 
-  handleObtenerSaldo() {
+  handleMascaraResponse() {
     let email = localStorage.getItem("usuarioLogin");
-    this.$.ObtenerSaldo.url = "http://localhost:3000/apirest/cuentas/" + email;
-    this.$.ObtenerSaldo.generateRequest();
+    this.$.AjaxObtenerSaldo.url =
+      "http://localhost:3000/apirest/cuentas/" + email;
+    this.$.AjaxObtenerSaldo.generateRequest();
+
+    this.$.AjaxVerMovimientos.url =
+      "http://localhost:3000/apirest/movimientos/" + email;
+    this.$.AjaxVerMovimientos.generateRequest();
+    localStorage.setItem("validarSaldo", "");
+    localStorage.setItem("validarMail", "");
+    this.formData = {};
+  }
+
+  handleUserResponseValidarSaldo(event) {
+    var response = event.detail.response;
+    if (response.saldo < this.$.Importe.value) {
+      alert("Importe a transferir es mayor al saldo de la cuenta");
+    } else {
+      localStorage.setItem("validarSaldo", "ok");
+    }
   }
 }
 
