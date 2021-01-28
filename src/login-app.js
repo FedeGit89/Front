@@ -84,6 +84,7 @@ class LoginApp extends PolymerElement {
     var response = event.detail.response;
     if (response.email) {
       localStorage.setItem("usuarioLogin", response.email);
+      localStorage.setItem("entro", "OK");
       this.set("route.path", "/dashboard");
     } else {
       alert(response.mensaje);

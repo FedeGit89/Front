@@ -28,5 +28,9 @@ class Dashboard extends PolymerElement {
     `;
   }
 }
+if (localStorage.getItem("entro") == "OK"){
+  location.reload();
+  localStorage.setItem("entro","NOK");
+}
 
 window.customElements.define("view-dashboard", Dashboard);

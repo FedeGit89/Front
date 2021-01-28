@@ -177,7 +177,6 @@ class AbmCuenta extends PolymerElement {
 
   handleUserResponseValidarMail(event) {
     var response = event.detail.response;
-    console.log(response.email);
     if (!response.email) {
       alert(response.mensaje);
     } else {
@@ -200,7 +199,6 @@ class AbmCuenta extends PolymerElement {
         "&" +
         importe;
       this.$.ActualizarCuenta.generateRequest();
-      console.log("aca3");
       email = this.$.email.value;
       opcion = "C";
 
@@ -212,7 +210,6 @@ class AbmCuenta extends PolymerElement {
         "&" +
         importe;
       this.$.ActualizarCuenta.generateRequest();
-      console.log("aca4");
       this.$.GrabarMovimiento.url =
         "http://localhost:3000/apirest/movimientos/";
       this.$.GrabarMovimiento.body = {

@@ -135,7 +135,7 @@ class MyApp extends PolymerElement {
     return {
       page: {
         type: String,
-        // reflectToAttribute: true,
+        reflectToAttribute: true,
         observer: "_pageChanged",
       },
       routeData: Object,
@@ -152,14 +152,14 @@ class MyApp extends PolymerElement {
     //
     // If no page was found in the route data, page will be an empty string.
     // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
-    console.log(this.$.lnkMenu.hidden);
     if (!page) {
       this.page = "login";
       this.$.lnkMenu.hidden = true;
+    } else if ( ["registrar"].indexOf(page) !== -1) {
+      this.page = "registrar";
+      this.$.lnkMenu.hidden = true;
     } else if (
-      ["registrar", "dashboard", "cuenta", "datos", "cotizacion"].indexOf(
-        page
-      ) !== -1
+      ["dashboard", "cuenta", "datos", "cotizacion"].indexOf(page) !== -1
     ) {
       this.$.lnkMenu.hidden = false;
       this.page = page;
@@ -167,7 +167,6 @@ class MyApp extends PolymerElement {
       this.$.lnkMenu.hidden = true;
       this.page = "login";
     }
-    console.log(this.$.lnkMenu.hidden);
 
     // Close a non-persistent drawer when the page & route are changed.
     if (!this.$.drawer.persistent) {
