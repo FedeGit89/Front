@@ -20,16 +20,6 @@ class ModifUsuario extends PolymerElement {
       </style>
 
       <iron-ajax
-        auto
-        url="http://localhost:3000/apirest/cuentas"
-        id="Mascara"
-        method="GET"
-        handle-as="json"
-        on-response="handleMascaraResponse"
-      >
-      </iron-ajax>
-
-      <iron-ajax
         id="ModificarAjax"
         url="[[urlLogin]]"
         method="PUT"
@@ -154,6 +144,28 @@ class ModifUsuario extends PolymerElement {
       </div>
     `;
   }
+
+  static get properties() {
+    return {
+      active: {
+        type: Boolean,
+        observer: "_activeChanged",
+      },
+    };
+  }
+
+  _activeChanged(newValue, oldValue) {
+    if (newValue) {
+      this.formData = {};
+      this.$.ObtenerDatos.url =
+      "http://localhost:3000/apirest/usuarios/" +
+      localStorage.getItem("usuarioLogin");
+    this.$.ObtenerDatos.generateRequest();
+    } else {
+      this.formData = {};
+    }
+  }
+
   modificar() {
     if (this.$.password.value > "") {
       this.$.ModificarAjax.url =
@@ -184,13 +196,6 @@ class ModifUsuario extends PolymerElement {
   handleUserResponseModificar() {
     this.$.password.value = "";
     alert("Se han modificado los datos");
-  }
-
-  handleMascaraResponse() {
-    this.$.ObtenerDatos.url =
-      "http://localhost:3000/apirest/usuarios/" +
-      localStorage.getItem("usuarioLogin");
-    this.$.ObtenerDatos.generateRequest();
   }
 }
 

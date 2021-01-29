@@ -139,22 +139,51 @@ class AltaUsuario extends PolymerElement {
       </div>
     `;
   }
-  registrar() {
-    this.$.RegistrarAjax.url =
-      "http://localhost:3000/apirest/usuarios/registrar";
-    this.$.RegistrarAjax.body = {
-      email: this.$.email.value,
-      password: this.$.password.value,
-      nombre: this.$.nombre.value,
-      apellido: this.$.apellido.value,
-      dni: this.$.dni.value,
-      fechaNacimiento: this.$.fechaNacimiento.value,
+
+  static get properties() {
+    return {
+      active: {
+        type: Boolean,
+        observer: "_activeChanged",
+      },
     };
-    this.$.RegistrarAjax.generateRequest();
+  }
+
+  _activeChanged(newValue, oldValue) {
+    if (newValue) {
+      this.$.email.value = "";
+      this.$.password.value = "";
+      this.$.nombre.value = "";
+      this.$.apellido.value = "";
+      this.$.dni.value = "";
+      this.$.fechaNacimiento.value = "";
+      this.formData = {};
+    }
+  }
+
+  registrar() {
+    if (this.$.email.value == "") {
+      alert("Debe ingresar el Email");
+    } else if (this.$.password.value == "") {
+      alert("Debe ingresar la Password");
+    } else {
+      this.$.RegistrarAjax.url =
+        "http://localhost:3000/apirest/usuarios/registrar";
+      this.$.RegistrarAjax.body = {
+        email: this.$.email.value,
+        password: this.$.password.value,
+        nombre: this.$.nombre.value,
+        apellido: this.$.apellido.value,
+        dni: this.$.dni.value,
+        fechaNacimiento: this.$.fechaNacimiento.value,
+      };
+      this.$.RegistrarAjax.generateRequest();
+    }
   }
 
   volver() {
     this.set("route.path", "/login");
+    this.formData = {};
   }
 
   handleUserResponse(event) {
@@ -166,12 +195,6 @@ class AltaUsuario extends PolymerElement {
       };
       this.$.AltaCuentaAjax.generateRequest();
       alert("El alta se ha realizado correctamente");
-      this.$.email.value = "";
-      this.$.password.value = "";
-      this.$.nombre.value = "";
-      this.$.apellido.value ="";
-      this.$.dni.value = "";
-      this.$.fechaNacimiento.value ="";
       this.set("route.path", "/login");
     } else {
       alert("Email " + this.$.email.value + " ya se encuentra registrado");

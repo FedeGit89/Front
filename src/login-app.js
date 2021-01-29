@@ -67,6 +67,22 @@ class LoginApp extends PolymerElement {
       </div>
     `;
   }
+
+  static get properties() {
+    return {
+      active: {
+        type: Boolean,
+        observer: "_activeChanged",
+      },
+    };
+  }
+  _activeChanged(newValue, oldValue) {
+    if (newValue) {
+      this.$.email.value = "";
+      this.$.password.value = "";
+    }
+  }
+
   login() {
     this.$.LoginAjax.url = "http://localhost:3000/apirest/usuarios/login";
     this.$.LoginAjax.body = {
@@ -84,7 +100,6 @@ class LoginApp extends PolymerElement {
     var response = event.detail.response;
     if (response.email) {
       localStorage.setItem("usuarioLogin", response.email);
-      localStorage.setItem("entro", "OK");
       this.set("route.path", "/dashboard");
     } else {
       alert(response.mensaje);

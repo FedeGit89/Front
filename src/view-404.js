@@ -11,7 +11,7 @@
 import { PolymerElement, html } from "@polymer/polymer/polymer-element.js";
 import "./shared-styles.js";
 
-class Dashboard extends PolymerElement {
+class view404 extends PolymerElement {
   static get template() {
     return html`
       <style include="shared-styles">
@@ -23,10 +23,10 @@ class Dashboard extends PolymerElement {
       </style>
 
       <div class="card">
-        <h1>Bienvenidos</h1>
+        <h2>NO EXISTE LA PAGINA</h1>
       </div>
     `;
   }
 }
 
-window.customElements.define("view-dashboard", Dashboard);
+window.customElements.define("view-404", view404);

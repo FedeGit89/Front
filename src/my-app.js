@@ -101,7 +101,7 @@ class MyApp extends PolymerElement {
               <a name="datos" href="[[rootPath]]datos">Mis Datos</a>
               <a name="cuenta" href="[[rootPath]]cuenta">Cuenta</a>
               <a name="cotizacion" href="[[rootPath]]cotizacion">Cotizacion</a>
-              <a name="salir" href="[[rootPath]]login">Salir</a>
+              <a name="salir" href="[[rootPath]]salir">Salir</a>
             </span>
           </iron-selector>
         </app-drawer>
@@ -118,13 +118,20 @@ class MyApp extends PolymerElement {
             </app-toolbar>
           </app-header>
 
-          <iron-pages selected="[[page]]" attr-for-selected="name" role="main">
+          <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            selected-attribute="active"
+            role="main"
+          >
             <view-dashboard name="dashboard"></view-dashboard>
             <alta-usuario name="registrar"></alta-usuario>
             <modif-usuario name="datos"></modif-usuario>
             <abm-cuenta name="cuenta"></abm-cuenta>
             <cotiz-usd name="cotizacion"></cotiz-usd>
             <login-app name="login"></login-app>
+            <view-404 name="view404"></view-404>
+            <salir-app name="salir"></salir-app>
           </iron-pages>
         </app-header-layout>
       </app-drawer-layout>
@@ -152,20 +159,18 @@ class MyApp extends PolymerElement {
     //
     // If no page was found in the route data, page will be an empty string.
     // Show 'view1' in that case. And if the page doesn't exist, show 'view404'.
-    if (!page) {
+    if ((!page) || (page == "components") || (page == "login")) {
       this.page = "login";
       this.$.lnkMenu.hidden = true;
-    } else if ( ["registrar"].indexOf(page) !== -1) {
-      this.page = "registrar";
+    } else if (["registrar","salir"].indexOf(page) !== -1) {
+      this.page = page;
       this.$.lnkMenu.hidden = true;
-    } else if (
-      ["dashboard", "cuenta", "datos", "cotizacion"].indexOf(page) !== -1
-    ) {
+    } else if (["dashboard", "cuenta", "datos", "cotizacion"].indexOf(page) !== -1) {
       this.$.lnkMenu.hidden = false;
       this.page = page;
     } else {
       this.$.lnkMenu.hidden = true;
-      this.page = "login";
+      this.page = "view404";
     }
 
     // Close a non-persistent drawer when the page & route are changed.
@@ -198,8 +203,11 @@ class MyApp extends PolymerElement {
       case "login":
         import("./login-app.js");
         break;
+      case "view404":
+        import("./view-404.js");
+        break;
       case "salir":
-        import("./login-app.js");
+        import("./salir-app.js");
         break;
     }
   }

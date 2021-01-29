@@ -22,17 +22,7 @@ class AbmCuenta extends PolymerElement {
         <app-location route="{{route}}"></app-location>
         <h2>Saldo de la Cuenta</h2>
         <p>
-        
-          <iron-ajax
-            auto
-            url="http://localhost:3000/apirest/cuentas"
-            id="Mascara"
-            method="GET"
-            handle-as="json"
-            on-response="handleMascaraResponse"
-          >
-          </iron-ajax>
-
+      
           <iron-ajax
             id="ActualizarCuenta"
             method="PUT"
@@ -79,7 +69,9 @@ class AbmCuenta extends PolymerElement {
           on-response="handleUserResponseValidarSaldo""
           last-response="{{cuenta}}"
         ></iron-ajax>
-        </p>
+
+        
+                  </p>
 
         <div>
           <h2>
@@ -164,6 +156,32 @@ class AbmCuenta extends PolymerElement {
     `;
   }
 
+  static get properties() {
+    return {
+      active: {
+        type: Boolean,
+        observer: "_activeChanged",
+      },
+    };
+  }
+
+  _activeChanged(newValue, oldValue) {
+    if (newValue) {
+      this.$.email.value = "";
+      this.$.Importe.value = "";
+      let email = localStorage.getItem("usuarioLogin");
+      this.$.AjaxObtenerSaldo.url =
+        "http://localhost:3000/apirest/cuentas/" + email;
+      this.$.AjaxObtenerSaldo.generateRequest();
+
+      this.$.AjaxVerMovimientos.url =
+        "http://localhost:3000/apirest/movimientos/" + email;
+      this.$.AjaxVerMovimientos.generateRequest();
+      localStorage.setItem("validarSaldo", "");
+      localStorage.setItem("validarMail", "");
+    }
+  }
+
   Validar() {
     this.$.AjaxValidarSaldo.url =
       "http://localhost:3000/apirest/cuentas/" +
@@ -177,10 +195,23 @@ class AbmCuenta extends PolymerElement {
 
   handleUserResponseValidarMail(event) {
     var response = event.detail.response;
-    if (!response.email) {
+    if (response.email == localStorage.getItem("usuarioLogin")) {
+      alert("No se puede transferir a uno mismo");
+    } else if (!response.email) {
       alert(response.mensaje);
     } else {
       localStorage.setItem("validarMail", "ok");
+    }
+  }
+
+  handleUserResponseValidarSaldo(event) {
+    var response = event.detail.response;
+    if (this.$.Importe.value < 0) {
+      alert("No se puede transferir importes negativos");
+    } else if (response.saldo < this.$.Importe.value) {
+      alert("Importe a transferir es mayor al saldo de la cuenta");
+    } else {
+      localStorage.setItem("validarSaldo", "ok");
     }
   }
 
@@ -224,29 +255,6 @@ class AbmCuenta extends PolymerElement {
       this.formData = {};
     } else {
       alert("Debe validar el movimiento antes de transferir");
-    }
-  }
-
-  handleMascaraResponse() {
-    let email = localStorage.getItem("usuarioLogin");
-    this.$.AjaxObtenerSaldo.url =
-      "http://localhost:3000/apirest/cuentas/" + email;
-    this.$.AjaxObtenerSaldo.generateRequest();
-
-    this.$.AjaxVerMovimientos.url =
-      "http://localhost:3000/apirest/movimientos/" + email;
-    this.$.AjaxVerMovimientos.generateRequest();
-    localStorage.setItem("validarSaldo", "");
-    localStorage.setItem("validarMail", "");
-    this.formData = {};
-  }
-
-  handleUserResponseValidarSaldo(event) {
-    var response = event.detail.response;
-    if (response.saldo < this.$.Importe.value) {
-      alert("Importe a transferir es mayor al saldo de la cuenta");
-    } else {
-      localStorage.setItem("validarSaldo", "ok");
     }
   }
 }
